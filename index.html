@@ -318,8 +318,6 @@ function fv(f) {
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 async function fetchDeliveries(tr) {
   const now = new Date();
-const today = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
-const tomorrow = new Date(today.getTime() + 86400000);
   try {
     let items=[], pt=null;
     do {
@@ -335,12 +333,7 @@ const tomorrow = new Date(today.getTime() + 86400000);
     } while(pt);
 
     // Filtrer par date du jour côté client
-    const filtered = items.filter(it => {
-      const ts = it.fields?.Date;
-      if(!ts) return false;
-      return ts >= today.getTime() && ts < tomorrow.getTime() ||
-       (ts >= today.getTime() - 14400000 && ts < tomorrow.getTime() - 14400000);
-    });
+  const filtered = items;
 
     // Trier par ordre
     filtered.sort((a,b) => (a.fields?.Ordre||999) - (b.fields?.Ordre||999));
