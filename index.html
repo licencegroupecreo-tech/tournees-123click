@@ -317,8 +317,9 @@ function fv(f) {
 // FETCH DELIVERIES
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 async function fetchDeliveries(tr) {
-  const today = new Date(); today.setHours(0,0,0,0);
-  const tomorrow = new Date(today); tomorrow.setDate(today.getDate()+1);
+  const now = new Date();
+const today = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+const tomorrow = new Date(today.getTime() + 86400000);
   try {
     let items=[], pt=null;
     do {
