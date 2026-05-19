@@ -129,6 +129,9 @@ select:focus{border-color:var(--blue)}
     </select>
     <button class="btn btn-blue" onclick="doLogin()" style="width:100%;margin-top:4px">
       Accéder à ma tournée →
+      <button onclick="testLark()" style="width:100%;margin-top:8px;background:#37474F;color:white;border:none;padding:12px;border-radius:10px;font-size:13px;cursor:pointer">
+  🔍 Tester connexion LARK
+</button>
     </button>
     <div id="login-date" style="text-align:center;margin-top:12px;font-size:12px;color:var(--text2)"></div>
   </div>
@@ -372,7 +375,30 @@ function toast(msg, dur=2500) {
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // LOGIN
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-function initLogin() {
+async function testLark() {
+  try {
+    alert('Étape 1 : obtention du token...');
+    const t = await tok();
+    if(!t) { alert('❌ Token LARK : ECHEC\nVérifiez App ID et Secret'); return; }
+    alert('✅ Token OK : ' + t.substring(0,25) + '...\n\nÉtape 2 : lecture de la table...');
+    
+    const url = C.API + '/open-apis/bitable/v1/apps/' + C.AT + '/tables/' + C.TL + '/records?page_size=5';
+    const r = await fetch(url, { headers: { Authorization: 'Bearer ' + t } });
+    const d = await r.json();
+    
+    if(d.code !== 0) {
+      alert('❌ Erreur LARK : code=' + d.code + '\n' + d.msg);
+      return;
+    }
+    
+    const nb = d.data?.items?.length || 0;
+    const first = d.data?.items?.[0]?.fields;
+    alert('✅ ' + nb + ' enregistrement(s) reçu(s)\n\nPremier :\nClient: ' + (first?.Client||'?') + '\nTransporteur: ' + (first?.Transporteur||'?') + '\nDate: ' + (first?.Date||'?') + '\nStatut: ' + JSON.stringify(first?.Statut||'?'));
+  } catch(e) {
+    alert('❌ Erreur réseau : ' + e.message);
+  }
+}
+  function initLogin() {
   const d = new Date();
   document.getElementById('login-date').textContent =
     d.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
