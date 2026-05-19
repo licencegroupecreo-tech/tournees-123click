@@ -338,7 +338,8 @@ const tomorrow = new Date(today.getTime() + 86400000);
     const filtered = items.filter(it => {
       const ts = it.fields?.Date;
       if(!ts) return false;
-      return ts >= today.getTime() && ts < tomorrow.getTime();
+      return ts >= today.getTime() && ts < tomorrow.getTime() ||
+       (ts >= today.getTime() - 14400000 && ts < tomorrow.getTime() - 14400000);
     });
 
     // Trier par ordre
