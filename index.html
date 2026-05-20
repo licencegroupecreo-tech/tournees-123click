@@ -236,7 +236,12 @@ let S = {
   pending: JSON.parse(localStorage.getItem('p')||'[]'),
   lastSync: localStorage.getItem('ls')||'--', activeTab: null,
 };
-
+function fixTel(t) {
+  const d = String(t||'').replace(/\D/g,'');
+  if(d.length === 9) return '0' + d;
+  if(d.length === 10) return d.replace(/(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/, '$1 $2 $3 $4 $5');
+  return t || '—';
+}
 function fv(f) {
   if(f==null) return '';
   if(typeof f==='object'&&'text' in f) return f.text;
@@ -379,7 +384,7 @@ function showDetail(rid) {
   document.getElementById('d-i').textContent=f.Iso||0;
   document.getElementById('d-addr').textContent=fv(f.Adresse)||'—';
   document.getElementById('d-ville').textContent=fv(f.Ville);
-  document.getElementById('d-tel').textContent=fv(f.Tel)||'—';
+  document.getElementById('d-tel').textContent=fixTel(fv(f.Tel));
   document.getElementById('d-cmd').textContent=fv(f.Commandes)||'—';
   document.getElementById('d-nbc').textContent=f.NbCdes!=null?f.NbCdes+' livraison(s)':'—';
   const note=fv(f.Note);
@@ -394,7 +399,7 @@ function openWaze(){
 }
 function callClient(){
   const f=S.deliveries.find(d=>d.record_id===S.cur)?.fields||{};
-  const t=fv(f.Tel).replace(/\s/g,'');
+  const t=fixTel(fv(f.Tel)).replace(/\s/g,'');
   if(t)window.location.href='tel:'+t; else toast('Numéro non disponible');
 }
 
